@@ -1,0 +1,28 @@
+services:
+  open-music-tag:
+    build: .
+    image: open-music-tag:local
+    container_name: open-music-tag
+    ports:
+      - "8318:8318"
+    volumes:
+      # persistent state: database, secret key, logs, trash, plugins
+      - ./data:/data
+      # read-only music library; add more mounts if you have several roots
+      - ${MUSIC_DIR:-./demo-music}:/music:ro
+    environment:
+      MTW_PORT: "8318"
+      MTW_WORKERS: "2"
+      MTW_SESSION_DAYS: "30"
+      # MTW_SECRET_KEY: "change-me-to-a-long-random-string"
+      # MTW_ADMIN_PASSWORD: "initial-admin-password"
+      # MTW_READ_ONLY: "0"
+      # Navidrome artwork cache maintenance (see app/navidrome.py, tools/navidrome.py):
+      # * after exporting/scraping artist images the recompute is queued automatically
+      # * MTW_NAVIDROME_SSH lets the app reach Navidrome on another host (e.g. the NAS)
+      # MTW_NAVIDROME_CONTAINER: "navidrome"
+      # MTW_NAVIDROME_DATA_FOLDER: "/data"
+      # MTW_NAVIDROME_SSH: "nas"
+      # MTW_NAVIDROME_AUTOREPROCESS: "0"
+      # MTW_NAVIDROME_TIMEOUT: "900"
+    restart: unless-stopped

@@ -1,0 +1,12 @@
+.git
+.gitignore
+data
+tmp
+demo-music
+tests/.tmp
+node_modules
+**/__pycache__
+**/*.pyc
+docs
+tools
+README.md

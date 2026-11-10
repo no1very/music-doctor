@@ -1,0 +1,33 @@
+services:
+  navidrome-bridge:
+    build: .
+    container_name: navidrome-bridge
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+      # 要驱动的 Navidrome 容器名
+      NAV_CONTAINER: navidrome
+      # 容器内看到的艺术家图片目录 / 数据库 / datafolder
+      ARTIST_DIR: /music/artist
+      NAV_DB: /data/navidrome.db
+      NAV_DATAFOLDER: /data
+      # 循环间隔（秒）
+      INTERVAL: 120
+      # 每轮做什么：摘队列 + 重算是常态工作
+      ENABLE_UNSTICK: "1"
+      ENABLE_REPROCESS: "1"
+      # 需要主动上网抓图/抓简介时才打开，默认关闭（避免意外批量请求）
+      ENABLE_IMAGE: "0"
+      ENABLE_BIO: "0"
+    volumes:
+      # 只读挂音乐库（写图需要 rw）
+      - /diskc/Music:/music
+      # 需要写 navidrome.db（补简介时停容器写库）
+      - /DATA/AppData/navidrome/data:/data
+      # 通过 Docker Engine API（unix socket）驱动 navidrome 的 exec / stop / start
+      - /var/run/docker.sock:/var/run/docker.sock
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"

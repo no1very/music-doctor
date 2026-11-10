@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Music-Doctor</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🎵</text></svg>" />
+<link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+<div id="app" class="app" hidden>  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">♪</div>
+      <div>
+        <div class="brand-name" id="siteName">Music-Doctor</div>
+      </div>
+    </div>
+
+    <nav class="nav" id="nav">
+      <a href="#/dashboard" data-route="dashboard"><span class="ico">▤</span>仪表盘</a>
+      <a href="#/library" data-route="library"><span class="ico">♫</span>音乐库</a>
+      <a href="#/albums" data-route="albums"><span class="ico">▣</span>专辑</a>
+      <a href="#/artists" data-route="artists"><span class="ico">☺</span>艺术家</a>
+      <a href="#/playlists" data-route="playlists"><span class="ico">☰</span>歌单</a>
+      <a href="#/tasks" data-route="tasks"><span class="ico">⏱</span>任务中心</a>
+      <a href="#/reports" data-route="reports"><span class="ico">◎</span>刮削报告</a>
+      <a href="#/duplicates" data-route="duplicates"><span class="ico">⧉</span>音乐去重</a>
+      <a href="#/rooms" data-route="rooms"><span class="ico">⌂</span>一起听</a>
+      <a href="#/settings" data-route="settings"><span class="ico">⚙</span>设置</a>
+    </nav>
+
+    <div class="side-section">
+      <div class="side-title">媒体库 <button class="mini" data-action="quick-scan" title="扫描全部媒体库">扫描</button></div>
+      <div id="sideLibraries" class="side-list"></div>
+    </div>
+
+    <div class="side-user" id="sideUser"></div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <button class="icon-btn mobile-only" data-action="toggle-sidebar">☰</button>
+      <div class="searchbox">
+        <input id="globalSearch" type="search" placeholder="搜索歌曲、专辑、艺术家…" autocomplete="off" aria-label="搜索歌曲、专辑、艺术家" />
+        <span class="search-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4.5 4.5"></path>
+          </svg>
+        </span>
+        <div id="searchResults" class="search-results" hidden></div>
+      </div>
+      <div class="top-actions">
+        <span id="taskBadge" class="task-badge" hidden></span>
+        <button class="btn ghost" data-action="open-scan">扫描媒体库</button>
+        <button class="btn ghost top-logout" id="topLogout" type="button" title="退出当前账号">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"></path><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path>
+          </svg>
+          退出登录
+        </button>
+      </div>
+    </header>
+    <section id="view" class="view"></section>
+  </main>
+</div>
+
+<!-- login -->
+<div id="login" class="login" hidden>
+  <form id="loginForm" class="login-card" autocomplete="on">
+    <div class="brand-mark big">♪</div>
+    <h1>Music-Doctor</h1>
+    <p class="muted">音乐标签刮削与管理</p>
+    <label>用户名<input name="username" id="loginUser" type="text" required autocomplete="username" placeholder="admin" /></label>
+    <label>密码<input name="password" id="loginPass" type="password" required autocomplete="current-password" /></label>
+    <button class="btn primary block" type="submit">登录</button>
+    <p id="loginError" class="error" hidden></p>
+    <p class="muted tiny">初始管理员密码位于 <code>data/INITIAL_ADMIN.txt</code></p>
+  </form>
+</div>
+
+<!-- player -->
+<div id="player" class="player" hidden>
+  <div class="np">
+    <img id="npCover" class="np-cover" alt="" />
+    <div class="np-meta">
+      <div id="npTitle" class="np-title">未在播放</div>
+      <div id="npArtist" class="np-artist muted"></div>
+    </div>
+    <button class="icon-btn" id="npFav" data-action="toggle-favorite" title="收藏">♡</button>
+  </div>
+  <div class="controls">
+    <div class="buttons">
+      <button class="icon-btn" data-action="prev" title="上一首">⏮</button>
+      <button class="play-btn" data-action="toggle-play" id="playBtn" title="播放/暂停">▶</button>
+      <button class="icon-btn" data-action="next" title="下一首">⏭</button>
+      <button class="icon-btn" data-action="toggle-shuffle" id="shuffleBtn" title="随机">⤨</button>
+      <button class="icon-btn" data-action="cycle-repeat" id="repeatBtn" title="循环">↻</button>
+    </div>
+    <div class="seekrow">
+      <span id="curTime" class="time">0:00</span>
+      <input id="seek" type="range" min="0" max="1000" value="0" step="1" />
+      <span id="totalTime" class="time">0:00</span>
+    </div>
+  </div>
+  <div class="player-right">
+    <div class="quality" id="qualityBadge"></div>
+    <button class="icon-btn" data-action="toggle-queue" title="播放队列">☷</button>
+    <button class="icon-btn" id="volBtn" data-action="toggle-mute" title="静音">🔊</button>
+    <input id="volume" class="volume" type="range" min="0" max="100" value="90" />
+  </div>
+  <audio id="audio" preload="metadata"></audio>
+</div>
+
+<!-- queue drawer -->
+<aside id="queuePanel" class="drawer right" hidden>
+  <div class="drawer-head">
+    <h3>播放队列 <span id="queueCount" class="muted"></span></h3>
+    <div>
+      <button class="mini" data-action="queue-clear">清空</button>
+      <button class="icon-btn" data-action="toggle-queue">✕</button>
+    </div>
+  </div>
+  <div id="queueList" class="queue-list"></div>
+</aside>
+
+<!-- track editor / generic drawer -->
+<aside id="editor" class="drawer right wide" hidden>
+  <div class="drawer-head">
+    <h3 id="editorTitle">编辑</h3>
+    <button class="icon-btn" data-action="close-editor">✕</button>
+  </div>
+  <div id="editorBody" class="drawer-body"></div>
+</aside>
+
+<div class="scrim" id="scrim" hidden></div>
+<div id="toasts" class="toasts"></div>
+
+<!-- boot fallback: shown until the SPA decides between login and app,
+     so a script error never leaves the user with a black screen -->
+<div id="boot" class="boot">
+  <div class="brand-mark big">♪</div>
+  <div class="boot-text">正在加载 Music-Doctor…</div>
+  <noscript><div class="boot-text">需要启用 JavaScript 才能使用本应用。</div></noscript>
+  <div id="bootError" class="boot-error" hidden></div>
+</div>
+
+<script type="module" src="/js/app.js"></script>
+</body>
+</html>

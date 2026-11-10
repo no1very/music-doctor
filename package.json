@@ -1,0 +1,13 @@
+{
+  "name": "music-doctor",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "音乐博士 Music-Doctor — self-hosted music library tagger, scraper and player",
+  "scripts": {
+    "ui-smoke": "node tools/ui_smoke.mjs",
+    "navidrome": "python tools/navidrome.py",
+    "navidrome:status": "python tools/navidrome.py status",
+    "navidrome:reprocess": "python tools/navidrome.py reprocess",
+    "navidrome:doctor": "python tools/navidrome.py doctor"
+  }
+}
