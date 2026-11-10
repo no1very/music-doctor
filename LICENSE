@@ -19,11 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-This project is an independent implementation of the publicly documented
-Music Tag Web feature set. It contains no code, assets or
-activation logic from that commercial product. "Music Tag Web" is the name of
-a separate product by its respective author and is used here only to describe
-compatibility goals.

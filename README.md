@@ -416,5 +416,3 @@ node tools/ui_smoke.mjs
 ## 许可
 
 本项目以 **MIT** 许可发布（见 [LICENSE](LICENSE)）。
-它不包含、不派生 Music Tag Web 的代码；Subsonic API 仅依据其公开规范实现。
-“Music Tag Web” 是其作者的商标/产品名，本仓库仅用于说明兼容目标。
