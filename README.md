@@ -74,6 +74,7 @@
 ### 运行
 
 ```bash
+git clone https://github.com/no1very/music-doctor.git
 cd music-doctor
 python run.py
 ```
